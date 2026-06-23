@@ -222,7 +222,7 @@ namespace MTSM.Archiver.Core.Config
         /// Indicates whether the path must already exist.
         /// </param>
         private static void ValidatePath(
-            string path,
+            string? path,
             string label,
             string jobName,
             List<string> errors,
