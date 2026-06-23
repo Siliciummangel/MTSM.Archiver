@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="MTSM.Archiver.Cli/MTSM.Archiver.Cli.csproj" Id="1e9e3674-9a4c-4977-92a2-8a943ed09125" />
   <Project Path="MTSM.Archiver.Core/MTSM.Archiver.Core.csproj" Id="2476b5ac-fca9-4ae5-b63e-b0bf76063495" />
+  <Project Path="MTSM.Archiver.Tests/MTSM.Archiver.Tests.csproj" Id="d6024623-a16c-487e-95af-8b0c8ad7e469" />
 </Solution>
