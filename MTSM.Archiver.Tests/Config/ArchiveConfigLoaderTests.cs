@@ -779,7 +779,7 @@ public class ArchiveConfigLoaderTests : IDisposable
     private string CreateRootConfig(List<string> jobDirectories, string fileName = "root.yaml")
     {
         var rootConfigPath = Path.Combine(_tempDirectory, fileName);
-        var directories = string.Join("\n  - ", jobDirectories.Select(d => d.Replace("\\", "\\\\")));
+        var directories = string.Join("\n              - ", jobDirectories.Select(d => $"\"{d.Replace("\\", "\\\\")}\""));
 
         var content = $@"
             name: TestArchiver
@@ -794,6 +794,8 @@ public class ArchiveConfigLoaderTests : IDisposable
                 jobConfigDirectories: []
                 ";
         }
+
+        Console.WriteLine(content);
 
         File.WriteAllText(rootConfigPath, content);
         return rootConfigPath;
