@@ -795,8 +795,6 @@ public class ArchiveConfigLoaderTests : IDisposable
                 ";
         }
 
-        Console.WriteLine(content);
-
         File.WriteAllText(rootConfigPath, content);
         return rootConfigPath;
     }
