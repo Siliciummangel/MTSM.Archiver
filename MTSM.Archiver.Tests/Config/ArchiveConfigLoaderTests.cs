@@ -802,7 +802,8 @@ public class ArchiveConfigLoaderTests : IDisposable
     private void CreateJobConfig(string directory, string fileName, string jobName)
     {
         var jobPath = Path.Combine(directory, fileName);
-        var content = $@"name: {jobName}
+        var content = $@"
+            name: {jobName}
             enabled: true
             source:
               path: C:\Source
