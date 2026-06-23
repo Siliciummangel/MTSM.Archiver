@@ -26,6 +26,11 @@ namespace MTSM.Archiver.Core.Config
 
             var rootConfig = LoadYamlFile<RootConfig>(rootConfigPath);
 
+            if (rootConfig.JobConfigDirectories is null)
+            {
+                throw new ConfigLoadException("Root config property 'jobConfigDirectories' cannot be null.");
+            }
+
             var rootDirectory = Path.GetDirectoryName(Path.GetFullPath(rootConfigPath))
                                 ?? Directory.GetCurrentDirectory();
 
