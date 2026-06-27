@@ -37,6 +37,14 @@ namespace MTSM.Archiver.Core.Abstractions.Models
         /// <summary>
         /// Gets optional metadata associated with the item.
         /// </summary>
-        public IReadOnlyDictionary<string, string> Metadata { get; init; } = ImmutableDictionary<string, string>.Empty;
+        public IReadOnlyDictionary<string, string> Metadata { get; init; }
+            = ImmutableDictionary<string, string>.Empty;
+
+        /// <summary>
+        /// Gets an optional delegate that opens a readable stream for the item's content.
+        /// If not specified, the provider is responsible for resolving the content by using
+        /// <see cref="SourceIdentifier"/>.
+        /// </summary>
+        public Func<CancellationToken, ValueTask<Stream>>? OpenReadAsync { get; init; }
     }
 }

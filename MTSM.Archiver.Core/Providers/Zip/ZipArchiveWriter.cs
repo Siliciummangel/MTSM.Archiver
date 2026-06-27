@@ -40,16 +40,13 @@ namespace MTSM.Archiver.Core.Providers.Zip
                             break;
 
                         case ArchiveItemKind.File:
-                            await WriteFileEntryAsync(
+                        case ArchiveItemKind.GeneratedContent:
+                            await WriteContentEntryAsync(
                                 archive,
                                 item,
                                 writtenDirectories,
                                 cancellationToken);
                             break;
-
-                        case ArchiveItemKind.GeneratedContent:
-                            throw new NotSupportedException(
-                                "Generated archive content is not supported by this writer yet.");
 
                         default:
                             throw new ArgumentOutOfRangeException(
@@ -68,7 +65,7 @@ namespace MTSM.Archiver.Core.Providers.Zip
             };
         }
 
-        private static async Task WriteFileEntryAsync(
+        private static async Task WriteContentEntryAsync(
             ZipArchive archive,
             ArchiveItem item,
             HashSet<string> writtenDirectories,
@@ -77,7 +74,7 @@ namespace MTSM.Archiver.Core.Providers.Zip
             var entryPath = NormalizeArchivePath(item.ArchivePath);
 
             if (string.IsNullOrWhiteSpace(entryPath))
-                throw new InvalidOperationException("Archive file path is missing.");
+                throw new InvalidOperationException("Archive entry path is missing.");
 
             WriteParentDirectoryEntries(
                 archive,
@@ -88,13 +85,9 @@ namespace MTSM.Archiver.Core.Providers.Zip
                 entryPath,
                 CompressionLevel.Optimal);
 
-            await using var sourceStream = new FileStream(
-                item.SourceIdentifier,
-                FileMode.Open,
-                FileAccess.Read,
-                FileShare.Read,
-                bufferSize: BufferSize,
-                options: FileOptions.Asynchronous | FileOptions.SequentialScan);
+            await using var sourceStream = await OpenSourceStreamAsync(
+                item,
+                cancellationToken);
 
             await using var entryStream = entry.Open();
 
@@ -102,6 +95,28 @@ namespace MTSM.Archiver.Core.Providers.Zip
                 entryStream,
                 BufferSize,
                 cancellationToken);
+        }
+
+        private static async ValueTask<Stream> OpenSourceStreamAsync(
+            ArchiveItem item,
+            CancellationToken cancellationToken)
+        {
+            if (item.OpenReadAsync is not null)
+                return await item.OpenReadAsync(cancellationToken);
+
+            if (item.Kind == ArchiveItemKind.File)
+            {
+                return new FileStream(
+                    item.SourceIdentifier,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.Read,
+                    bufferSize: BufferSize,
+                    options: FileOptions.Asynchronous | FileOptions.SequentialScan);
+            }
+
+            throw new InvalidOperationException(
+                $"Archive item '{item.ArchivePath}' does not provide a readable content stream.");
         }
 
         private static void WriteDirectoryEntry(
