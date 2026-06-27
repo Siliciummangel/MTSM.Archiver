@@ -145,6 +145,12 @@
         public ArchiveFormat Format { get; init; } = ArchiveFormat.Zip;
 
         /// <summary>
+        /// Compression level used when creating the archive.
+        /// </summary>
+        public ArchiveCompressionLevel CompressionLevel { get; init; }
+            = ArchiveCompressionLevel.Optimal;
+
+        /// <summary>
         /// Behavior when the target archive already exists.
         /// </summary>
         public ExistingArchiveBehavior ExistingArchiveBehavior { get; init; } = ExistingArchiveBehavior.Fail;
@@ -236,5 +242,12 @@
         Fail,
         Overwrite,
         CreateUniqueName
+    }
+
+    public enum ArchiveCompressionLevel
+    {
+        None,
+        Fastest,
+        Optimal
     }
 }

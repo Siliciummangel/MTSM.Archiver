@@ -1,5 +1,6 @@
 ﻿using MTSM.Archiver.Core.Abstractions.Interfaces;
 using MTSM.Archiver.Core.Abstractions.Models;
+using MTSM.Archiver.Core.Config.Models;
 using System.IO.Compression;
 
 namespace MTSM.Archiver.Core.Providers.Zip
@@ -42,6 +43,7 @@ namespace MTSM.Archiver.Core.Providers.Zip
                         case ArchiveItemKind.File:
                         case ArchiveItemKind.GeneratedContent:
                             await WriteContentEntryAsync(
+                                GetCompressionLevel(context.Job.Archive.CompressionLevel),
                                 archive,
                                 item,
                                 writtenDirectories,
@@ -66,6 +68,7 @@ namespace MTSM.Archiver.Core.Providers.Zip
         }
 
         private static async Task WriteContentEntryAsync(
+            CompressionLevel compressionLevel,
             ZipArchive archive,
             ArchiveItem item,
             HashSet<string> writtenDirectories,
@@ -83,7 +86,7 @@ namespace MTSM.Archiver.Core.Providers.Zip
 
             var entry = archive.CreateEntry(
                 entryPath,
-                CompressionLevel.Optimal);
+                compressionLevel);
             
             if (item.LastWriteTime is not null)
             {
@@ -197,6 +200,17 @@ namespace MTSM.Archiver.Core.Providers.Zip
             return normalizedPath.EndsWith('/')
                 ? normalizedPath
                 : normalizedPath + '/';
+        }
+
+        private static CompressionLevel GetCompressionLevel(
+            ArchiveCompressionLevel level)
+        {
+            return level switch
+            {
+                ArchiveCompressionLevel.None => CompressionLevel.NoCompression,
+                ArchiveCompressionLevel.Fastest => CompressionLevel.Fastest,
+                _ => CompressionLevel.Optimal
+            };
         }
     }
 }
