@@ -11,7 +11,7 @@ namespace MTSM.Archiver.Core.Abstractions.Interfaces
         /// Opens a writable stream to the destination. 
         /// The caller is responsible for disposing the returned stream.
         /// </summary>
-        Task<Stream> OpenWriteAsync(
+        ValueTask<Stream> OpenWriteAsync(
             ArchiveDestinationContext context,
             CancellationToken cancellationToken = default);
     }

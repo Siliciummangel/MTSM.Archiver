@@ -13,6 +13,11 @@ namespace MTSM.Archiver.Core.Abstractions.Models
         public Guid RunId { get; init; }
 
         /// <summary>
+        /// Gets the UTC timestamp when the archive execution started.
+        /// </summary>
+        public DateTimeOffset StartedAt { get; init; }
+
+        /// <summary>
         /// Gets the archive target configuration.
         /// </summary>
         public required ArchiveTargetConfig ArchiveTarget { get; init; }

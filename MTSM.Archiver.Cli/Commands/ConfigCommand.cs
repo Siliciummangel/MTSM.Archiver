@@ -1,5 +1,7 @@
 ﻿using MTSM.Archiver.Core.Config;
 using System.CommandLine;
+using MTSM.Archiver.Core.Abstractions.Models;
+using MTSM.Archiver.Core.Providers.Naming;
 
 namespace MTSM.Archiver.Cli.Commands
 {
@@ -58,6 +60,29 @@ namespace MTSM.Archiver.Cli.Commands
             });
 
             configCommand.Subcommands.Add(validateCommand);
+
+            var previewDestinationCommand = new Command(
+                "preview-destination",
+                "Displays the resolved archive destination path for a configured archive job without creating an archive file");
+
+            var jobOption = new Option<string>("--job")
+            {
+                Description = "Name of the archive job to preview",
+                Required = true
+            };
+
+            previewDestinationCommand.Options.Add(configOption);
+            previewDestinationCommand.Options.Add(jobOption);
+
+            previewDestinationCommand.SetAction(parseResult =>
+            {
+                var configFile = parseResult.GetValue(configOption);
+                var jobName = parseResult.GetValue(jobOption);
+
+                return RunPreviewDestination(configFile!, jobName!);
+            });
+
+            configCommand.Subcommands.Add(previewDestinationCommand);
 
             return configCommand;
         }
@@ -119,6 +144,71 @@ namespace MTSM.Archiver.Cli.Commands
             catch (Exception ex)
             {
                 Console.Error.WriteLine("Failed to load configuration.");
+                Console.Error.WriteLine(ex.Message);
+
+                if (ex.InnerException is not null)
+                    Console.Error.WriteLine(ex.InnerException.Message);
+
+                return CliExitCodes.Error;
+            }
+        }
+
+        /// <summary>
+        /// Loads the archive configuration and displays the resolved destination path
+        /// for the specified archive job without creating an archive file.
+        /// </summary>
+        /// <param name="configFile">The root configuration file to load.</param>
+        /// <param name="jobName">The name of the archive job to preview.</param>
+        /// <returns>
+        /// <see cref="CliExitCodes.Success"/> when the preview was created successfully;
+        /// otherwise <see cref="CliExitCodes.Error"/>.
+        /// </returns>
+        private static int RunPreviewDestination(FileInfo configFile, string jobName)
+        {
+            try
+            {
+                var loader = new ArchiveConfigLoader();
+                var config = loader.Load(configFile.FullName);
+
+                var job = config.Jobs
+                    .FirstOrDefault(x => string.Equals(
+                        x.Job.Name,
+                        jobName,
+                        StringComparison.OrdinalIgnoreCase));
+
+                if (job is null)
+                {
+                    Console.Error.WriteLine($"Archive job '{jobName}' was not found.");
+                    return CliExitCodes.Error;
+                }
+
+                var context = new ArchiveDestinationContext
+                {
+                    RunId = Guid.NewGuid(),
+                    StartedAt = DateTimeOffset.UtcNow,
+                    ArchiveTarget = job.Job.Archive
+                };
+
+                var resolver = new DefaultArchiveFileNameResolver();
+                var fileName = resolver.ResolveFileName(context);
+
+                var targetDirectory = Path.GetFullPath(job.Job.Archive.TargetDirectory);
+                var fullPath = Path.Combine(targetDirectory, fileName);
+
+                Console.WriteLine("Archive destination preview");
+                Console.WriteLine();
+                Console.WriteLine($"Job:              {job.Job.Name}");
+                Console.WriteLine($"Run ID:           {context.RunId}");
+                Console.WriteLine($"Started at UTC:   {context.StartedAt:O}");
+                Console.WriteLine($"Target directory: {targetDirectory}");
+                Console.WriteLine($"File name:        {fileName}");
+                Console.WriteLine($"Full path:        {fullPath}");
+
+                return CliExitCodes.Success;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("Failed to preview archive destination.");
                 Console.Error.WriteLine(ex.Message);
 
                 if (ex.InnerException is not null)
