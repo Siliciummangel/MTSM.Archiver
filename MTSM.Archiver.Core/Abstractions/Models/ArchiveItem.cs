@@ -30,6 +30,11 @@ namespace MTSM.Archiver.Core.Abstractions.Models
         public ArchiveItemKind Kind { get; init; } = ArchiveItemKind.File;
 
         /// <summary>
+        /// Gets the last modification time of the archive item if known.
+        /// </summary>
+        public DateTimeOffset? LastWriteTime { get; init; }
+
+        /// <summary>
         /// Gets the size of the item in bytes if known.
         /// </summary>
         public long Size { get; init; } = 0;

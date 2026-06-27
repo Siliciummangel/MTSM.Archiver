@@ -84,6 +84,11 @@ namespace MTSM.Archiver.Core.Providers.Zip
             var entry = archive.CreateEntry(
                 entryPath,
                 CompressionLevel.Optimal);
+            
+            if (item.LastWriteTime is not null)
+            {
+                entry.LastWriteTime = item.LastWriteTime.Value;
+            }
 
             await using var sourceStream = await OpenSourceStreamAsync(
                 item,
