@@ -1,5 +1,4 @@
-﻿using MTSM.Archiver.Core.Writers.Models;
-using MTSM.Archiver.Core.Verification.Models;
+﻿using MTSM.Archiver.Core.Abstractions.Models;
 
 namespace MTSM.Archiver.Core.Abstractions.Interfaces
 {

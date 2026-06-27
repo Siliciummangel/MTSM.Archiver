@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MTSM.Archiver.Core.Execution.Models
+namespace MTSM.Archiver.Core.Abstractions.Models
 {
     /// <summary>
     /// Contains runtime information for an archive job execution.

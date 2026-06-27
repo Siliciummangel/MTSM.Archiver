@@ -1,7 +1,6 @@
-﻿using MTSM.Archiver.Core.Execution.Models;
-using MTSM.Archiver.Core.Config.Models;
+﻿using MTSM.Archiver.Core.Config.Models;
 
-namespace MTSM.Archiver.Core.Destinations.Models
+namespace MTSM.Archiver.Core.Abstractions.Models
 {
     /// <summary>
     /// Contains the information required to open an archive destination for writing.

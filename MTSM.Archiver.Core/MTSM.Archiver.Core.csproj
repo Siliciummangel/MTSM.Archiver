@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <Folder Include="Manifest\" />
-    <Folder Include="Sources\" />
+    <Folder Include="Providers\" />
   </ItemGroup>
 
 </Project>

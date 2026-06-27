@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MTSM.Archiver.Core.Execution.Models
+namespace MTSM.Archiver.Core.Abstractions.Models
 {
     /// <summary>
     /// Defines the possible outcomes of an archive job execution.

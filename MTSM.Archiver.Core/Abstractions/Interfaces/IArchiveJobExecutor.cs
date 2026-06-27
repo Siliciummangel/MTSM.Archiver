@@ -1,5 +1,5 @@
-﻿using MTSM.Archiver.Core.Config.Models;
-using MTSM.Archiver.Core.Execution.Models;
+﻿using MTSM.Archiver.Core.Abstractions.Models;
+using MTSM.Archiver.Core.Config.Models;
 
 namespace MTSM.Archiver.Core.Abstractions.Interfaces
 {

@@ -1,10 +1,9 @@
-﻿using MTSM.Archiver.Core.Abstractions.Models;
-using MTSM.Archiver.Core.Config.Models;
+﻿using MTSM.Archiver.Core.Config.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MTSM.Archiver.Core.Writers.Models
+namespace MTSM.Archiver.Core.Abstractions.Models
 {
     /// <summary>
     /// Provides all information required to create an archive artifact.

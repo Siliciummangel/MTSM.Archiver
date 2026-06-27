@@ -1,11 +1,8 @@
-﻿using MTSM.Archiver.Core.Abstractions.Models;
-using MTSM.Archiver.Core.Execution.Models;
-using MTSM.Archiver.Core.Writers.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MTSM.Archiver.Core.PostActions.Models
+namespace MTSM.Archiver.Core.Abstractions.Models
 {
     /// <summary>
     /// Contains all information required to execute a post-archive action.
