@@ -1,50 +1,63 @@
 ﻿namespace MTSM.Archiver.Core.Config.Models
 {
     /// <summary>
-    /// Represents a single archive job definition.
-    /// A job describes which files should be processed,
-    /// how they should be archived and what should happen afterwards.
+    /// Represents an archive job configuration file.
+    /// This type contains the executable archive job definition together with
+    /// configuration-file-level metadata such as schedules.
+    /// </summary>
+    public sealed class ArchiveJobFile
+    {
+        /// <summary>
+        /// Gets the executable archive job definition.
+        /// </summary>
+        public required ArchiveJobConfig Job { get; init; }
+
+        /// <summary>
+        /// Gets the schedules that define when the archive job should be executed.
+        /// Scheduling is handled outside of the archive job executor.
+        /// </summary>
+        public List<ScheduleConfig> Schedules { get; init; } = [];
+    }
+
+    /// <summary>
+    /// Represents the executable definition of a single archive job.
+    /// A job defines what should be archived, where the archive should be written,
+    /// and what should happen to source files after a successful archive operation.
     /// </summary>
     public class ArchiveJobConfig
     {
         /// <summary>
-        /// Unique name of the archive job.
+        /// Gets the unique name of the archive job.
         /// </summary>
         public required string Name { get; init; } = string.Empty;
 
         /// <summary>
-        /// Indicates whether this job is enabled and should be executed.
+        /// Gets a value indicating whether this job is enabled and may be executed.
         /// </summary>
         public bool Enabled { get; init; } = true;
 
         /// <summary>
-        /// Source location settings.
+        /// Gets the source location settings.
         /// </summary>
         public required SourceConfig Source { get; init; } = new();
 
         /// <summary>
-        /// File selection and filtering rules.
+        /// Gets the file selection and filtering rules.
         /// </summary>
         public FileSelectionConfig Selection { get; init; } = new();
 
         /// <summary>
-        /// Archive output settings.
+        /// Gets the archive output settings.
         /// </summary>
         public ArchiveTargetConfig Archive { get; init; } = new();
 
         /// <summary>
-        /// Defines what should happen to source files after archiving.
+        /// Gets the behavior that should be applied to source files after archiving.
         /// </summary>
         public SourceFileBehaviorConfig SourceFileBehavior { get; init; } = new();
 
         /// <summary>
-        /// Defines when this archive job should be executed.
-        /// Multiple schedules may be configured.
-        /// </summary>
-        public List<ScheduleConfig> Schedules { get; init; } = [];
-
-        /// <summary>
-        /// Execution-related settings.
+        /// Gets the execution-related settings for this archive job.
         /// </summary>
         public ExecutionConfig Execution { get; init; } = new();
     }

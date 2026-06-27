@@ -34,7 +34,7 @@ namespace MTSM.Archiver.Core.Config
             var rootDirectory = Path.GetDirectoryName(Path.GetFullPath(rootConfigPath))
                                 ?? Directory.GetCurrentDirectory();
 
-            var jobConfigs = new List<ArchiveJobConfig>();
+            var jobConfigs = new List<ArchiveJobFile>();
 
             foreach (var directory in rootConfig.JobConfigDirectories)
             {
@@ -51,7 +51,7 @@ namespace MTSM.Archiver.Core.Config
 
                 foreach (var file in files)
                 {
-                    var jobConfig = LoadYamlFile<ArchiveJobConfig>(file);
+                    var jobConfig = LoadYamlFile<ArchiveJobFile>(file);
                     jobConfigs.Add(jobConfig);
                 }
             }

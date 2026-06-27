@@ -84,30 +84,30 @@ namespace MTSM.Archiver.Core.Config
         /// Validates a single archive job.
         /// </summary>
         private static void ValidateJob(
-            ArchiveJobConfig job,
+            ArchiveJobFile jobFile,
             List<string> errors,
             bool checkPathExists)
         {
-            var jobName = string.IsNullOrWhiteSpace(job.Name)
+            var jobName = string.IsNullOrWhiteSpace(jobFile.Job.Name)
                 ? "<unnamed>"
-                : job.Name;
+                : jobFile.Job.Name;
 
-            if (string.IsNullOrWhiteSpace(job.Name))
+            if (string.IsNullOrWhiteSpace(jobFile.Job.Name))
                 errors.Add("Job config: Job name is missing.");
 
-            if (string.IsNullOrWhiteSpace(job.Archive.FileNamePattern))
+            if (string.IsNullOrWhiteSpace(jobFile.Job.Archive.FileNamePattern))
                 errors.Add($"Job '{jobName}': Archive file name pattern is missing.");
 
-            ValidateSelection(job, jobName, errors);
-            ValidateSourceFileBehavior(job, jobName, errors);
-            ValidateSchedules(job, jobName, errors);
+            ValidateSelection(jobFile.Job, jobName, errors);
+            ValidateSourceFileBehavior(jobFile.Job, jobName, errors);
+            ValidateSchedules(jobFile, jobName, errors);
 
-            ValidatePath(job.Source.Path, "Source path", jobName, errors, mustExist: checkPathExists);
-            ValidatePath(job.Archive.TargetDirectory, "Archive target directory", jobName, errors, mustExist: false);
-            if (job.SourceFileBehavior.AfterSuccessfulArchive == SourceFileAction.Move)
+            ValidatePath(jobFile.Job.Source.Path, "Source path", jobName, errors, mustExist: checkPathExists);
+            ValidatePath(jobFile.Job.Archive.TargetDirectory, "Archive target directory", jobName, errors, mustExist: false);
+            if (jobFile.Job.SourceFileBehavior.AfterSuccessfulArchive == SourceFileAction.Move)
             {
                 ValidatePath(
-                    job.SourceFileBehavior.MoveToDirectory,
+                    jobFile.Job.SourceFileBehavior.MoveToDirectory,
                     "Move target directory",
                     jobName,
                     errors,
@@ -189,9 +189,9 @@ namespace MTSM.Archiver.Core.Config
         /// <summary>
         /// Validates configured execution schedules.
         /// </summary>
-        private static void ValidateSchedules(ArchiveJobConfig job, string jobName, List<string> errors)
+        private static void ValidateSchedules(ArchiveJobFile jobFile, string jobName, List<string> errors)
         {
-            foreach (var schedule in job.Schedules.Where(s => s.Enabled))
+            foreach (var schedule in jobFile.Schedules.Where(s => s.Enabled))
             {
                 if (string.IsNullOrWhiteSpace(schedule.CronExpression))
                     errors.Add($"Job '{jobName}': Enabled schedule has no cron expression.");

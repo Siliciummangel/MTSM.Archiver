@@ -31,11 +31,11 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig>
+            Jobs = new List<ArchiveJobFile>
             {
-                CreateValidJobConfig("Job1"),
-                CreateValidJobConfig("Job2"),
-                CreateValidJobConfig("Job3")
+                CreateValidJobFile("Job1"),
+                CreateValidJobFile("Job2"),
+                CreateValidJobFile("Job3")
             }
         };
 
@@ -78,14 +78,20 @@ public class ArchiveConfigValidatorTests
             {
                 AfterSuccessfulArchive = SourceFileAction.Keep
             },
-            Schedules = new List<ScheduleConfig>(),
             Execution = new ExecutionConfig { DryRun = true }
         };
 
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile>
+            {
+                new ArchiveJobFile
+                {
+                    Job = job,
+                    Schedules = new List<ScheduleConfig>()
+                }
+            }
         };
 
         // Act
@@ -120,14 +126,20 @@ public class ArchiveConfigValidatorTests
                 AfterSuccessfulArchive = SourceFileAction.Move,
                 MoveToDirectory = @"C:\Archive\Moved"
             },
-            Schedules = new List<ScheduleConfig>(),
             Execution = new ExecutionConfig { DryRun = true }
         };
 
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile>
+            {
+                new ArchiveJobFile
+                {
+                    Job = job,
+                    Schedules = new List<ScheduleConfig>()
+                }
+            }
         };
 
         // Act
@@ -154,19 +166,25 @@ public class ArchiveConfigValidatorTests
                 Format = ArchiveFormat.Zip
             },
             SourceFileBehavior = new SourceFileBehaviorConfig { AfterSuccessfulArchive = SourceFileAction.Keep },
-            Schedules = new List<ScheduleConfig>
-            {
-                new() { Enabled = true, CronExpression = "0 2 * * *" },
-                new() { Enabled = true, CronExpression = "0 14 * * 5" },
-                new() { Enabled = false, CronExpression = "" } // Disabled schedules should not be validated
-            },
             Execution = new ExecutionConfig { DryRun = true }
         };
 
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile>
+            {
+                new ArchiveJobFile
+                {
+                    Job = job,
+                    Schedules = new List<ScheduleConfig>
+                    {
+                        new() { Enabled = true, CronExpression = "0 2 * * *" },
+                        new() { Enabled = true, CronExpression = "0 14 * * 5" },
+                        new() { Enabled = false, CronExpression = "" } // Disabled schedules should not be validated
+                    }
+                }
+            }
         };
 
         // Act
@@ -190,7 +208,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = root,
-            Jobs = new List<ArchiveJobConfig> { CreateValidJobConfig("TestJob") }
+            Jobs = new List<ArchiveJobFile> { CreateValidJobFile("TestJob") }
         };
 
         // Act
@@ -215,7 +233,7 @@ public class ArchiveConfigValidatorTests
                 Name = string.Empty,
                 JobConfigDirectories = new List<string> { @"C:\Config\Jobs" }
             },
-            Jobs = new List<ArchiveJobConfig> { CreateValidJobConfig("TestJob") }
+            Jobs = new List<ArchiveJobFile> { CreateValidJobFile("TestJob") }
         };
 
         // Act
@@ -236,7 +254,7 @@ public class ArchiveConfigValidatorTests
                 Name = "   ",
                 JobConfigDirectories = new List<string> { @"C:\Config\Jobs" }
             },
-            Jobs = new List<ArchiveJobConfig> { CreateValidJobConfig("TestJob") }
+            Jobs = new List<ArchiveJobFile> { CreateValidJobFile("TestJob") }
         };
 
         // Act
@@ -257,7 +275,7 @@ public class ArchiveConfigValidatorTests
                 Name = "Test Archiver",
                 JobConfigDirectories = new List<string>()
             },
-            Jobs = new List<ArchiveJobConfig> { CreateValidJobConfig("TestJob") }
+            Jobs = new List<ArchiveJobFile> { CreateValidJobFile("TestJob") }
         };
 
         // Act
@@ -278,7 +296,7 @@ public class ArchiveConfigValidatorTests
                 Name = "Test Archiver",
                 JobConfigDirectories = new List<string> { @"C:\Config\Jobs", string.Empty }
             },
-            Jobs = new List<ArchiveJobConfig> { CreateValidJobConfig("TestJob") }
+            Jobs = new List<ArchiveJobFile> { CreateValidJobFile("TestJob") }
         };
 
         // Act
@@ -299,7 +317,7 @@ public class ArchiveConfigValidatorTests
                 Name = "Test Archiver",
                 JobConfigDirectories = new List<string> { @"C:\Config\Jobs", "   " }
             },
-            Jobs = new List<ArchiveJobConfig> { CreateValidJobConfig("TestJob") }
+            Jobs = new List<ArchiveJobFile> { CreateValidJobFile("TestJob") }
         };
 
         // Act
@@ -321,7 +339,7 @@ public class ArchiveConfigValidatorTests
                 JobConfigDirectories = new List<string> { @"C:\Config\Jobs" },
                 DefaultJobConfigDirectory = @"C:\SomeOtherPath"
             },
-            Jobs = new List<ArchiveJobConfig> { CreateValidJobConfig("TestJob") }
+            Jobs = new List<ArchiveJobFile> { CreateValidJobFile("TestJob") }
         };
 
         // Act
@@ -338,7 +356,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig>()
+            Jobs = new List<ArchiveJobFile>()
         };
 
         // Act
@@ -371,7 +389,14 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile>
+            {
+                new ArchiveJobFile
+                {
+                    Job = job,
+                    Schedules = new List<ScheduleConfig>()
+                }
+            }
         };
 
         // Act
@@ -400,7 +425,14 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile>
+            {
+                new ArchiveJobFile
+                {
+                    Job = job,
+                    Schedules = new List<ScheduleConfig>()
+                }
+            }
         };
 
         // Act
@@ -429,7 +461,14 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile>
+            {
+                new ArchiveJobFile
+                {
+                    Job = job,
+                    Schedules = new List<ScheduleConfig>()
+                }
+            }
         };
 
         // Act
@@ -458,7 +497,14 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile>
+            {
+                new ArchiveJobFile
+                {
+                    Job = job,
+                    Schedules = new List<ScheduleConfig>()
+                }
+            }
         };
 
         // Act
@@ -487,7 +533,14 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile>
+            {
+                new ArchiveJobFile
+                {
+                    Job = job,
+                    Schedules = new List<ScheduleConfig>()
+                }
+            }
         };
 
         // Act
@@ -521,7 +574,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -551,7 +604,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -581,7 +634,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -611,7 +664,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -641,7 +694,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -671,7 +724,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -701,7 +754,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -731,7 +784,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -761,7 +814,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -799,7 +852,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -833,7 +886,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -861,17 +914,23 @@ public class ArchiveConfigValidatorTests
             {
                 TargetDirectory = @"C:\Archive",
                 FileNamePattern = "{jobName}_{yyyyMMdd_HHmmss}"
-            },
-            Schedules = new List<ScheduleConfig>
-            {
-                new() { Enabled = true, CronExpression = string.Empty }
             }
         };
 
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile>
+            {
+                new ArchiveJobFile
+                {
+                    Job = job,
+                    Schedules = new List<ScheduleConfig>
+                    {
+                        new() { Enabled = true, CronExpression = string.Empty }
+                    }
+                }
+            }
         };
 
         // Act
@@ -894,17 +953,23 @@ public class ArchiveConfigValidatorTests
             {
                 TargetDirectory = @"C:\Archive",
                 FileNamePattern = "{jobName}_{yyyyMMdd_HHmmss}"
-            },
-            Schedules = new List<ScheduleConfig>
-            {
-                new() { Enabled = true, CronExpression = "   " }
             }
         };
 
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile>
+            {
+                new ArchiveJobFile
+                {
+                    Job = job,
+                    Schedules = new List<ScheduleConfig>
+                    {
+                        new() { Enabled = true, CronExpression = "   " }
+                    }
+                }
+            }
         };
 
         // Act
@@ -937,7 +1002,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -966,7 +1031,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -1000,7 +1065,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -1033,7 +1098,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -1062,7 +1127,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -1096,7 +1161,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -1130,7 +1195,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -1160,7 +1225,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -1190,7 +1255,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -1219,7 +1284,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -1254,7 +1319,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -1285,17 +1350,23 @@ public class ArchiveConfigValidatorTests
             {
                 TargetDirectory = @"C:\Archive",
                 FileNamePattern = "{jobName}_{yyyyMMdd_HHmmss}"
-            },
-            Schedules = new List<ScheduleConfig>
-            {
-                new() { Enabled = false, CronExpression = string.Empty }
             }
         };
 
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile>
+            {
+                new ArchiveJobFile
+                {
+                    Job = job,
+                    Schedules = new List<ScheduleConfig>
+                    {
+                        new() { Enabled = false, CronExpression = string.Empty }
+                    }
+                }
+            }
         };
 
         // Act
@@ -1329,7 +1400,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -1363,7 +1434,7 @@ public class ArchiveConfigValidatorTests
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -1385,7 +1456,7 @@ public class ArchiveConfigValidatorTests
                 JobConfigDirectories = new List<string> { @"C:\Config\Jobs" },
                 DefaultJobConfigDirectory = null
             },
-            Jobs = new List<ArchiveJobConfig> { CreateValidJobConfig("TestJob") }
+            Jobs = new List<ArchiveJobFile> { CreateValidJobFile("TestJob") }
         };
 
         // Act
@@ -1407,7 +1478,7 @@ public class ArchiveConfigValidatorTests
                 JobConfigDirectories = new List<string> { @"C:\Config\Jobs" },
                 DefaultJobConfigDirectory = "   "
             },
-            Jobs = new List<ArchiveJobConfig> { CreateValidJobConfig("TestJob") }
+            Jobs = new List<ArchiveJobFile> { CreateValidJobFile("TestJob") }
         };
 
         // Act
@@ -1440,14 +1511,13 @@ public class ArchiveConfigValidatorTests
                 Format = ArchiveFormat.Zip
             },
             SourceFileBehavior = new SourceFileBehaviorConfig { AfterSuccessfulArchive = SourceFileAction.Keep },
-            Schedules = new List<ScheduleConfig>(),
             Execution = new ExecutionConfig { DryRun = true }
         };
 
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -1474,14 +1544,13 @@ public class ArchiveConfigValidatorTests
                 Format = ArchiveFormat.Zip
             },
             SourceFileBehavior = new SourceFileBehaviorConfig { AfterSuccessfulArchive = SourceFileAction.Keep },
-            Schedules = new List<ScheduleConfig>(),
             Execution = new ExecutionConfig { DryRun = true }
         };
 
         var config = new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { job }
+            Jobs = new List<ArchiveJobFile> { new ArchiveJobFile { Job = job, Schedules = new List<ScheduleConfig>() } }
         };
 
         // Act
@@ -1500,7 +1569,7 @@ public class ArchiveConfigValidatorTests
         return new ArchiveRuntimeConfig
         {
             Root = CreateValidRootConfig(),
-            Jobs = new List<ArchiveJobConfig> { CreateValidJobConfig("TestJob") }
+            Jobs = new List<ArchiveJobFile> { CreateValidJobFile("TestJob") }
         };
     }
 
@@ -1535,8 +1604,16 @@ public class ArchiveConfigValidatorTests
             {
                 AfterSuccessfulArchive = SourceFileAction.Keep
             },
-            Schedules = new List<ScheduleConfig>(),
             Execution = new ExecutionConfig { DryRun = true }
+        };
+    }
+
+    private static ArchiveJobFile CreateValidJobFile(string name)
+    {
+        return new ArchiveJobFile
+        {
+            Job = CreateValidJobConfig(name),
+            Schedules = new List<ScheduleConfig>()
         };
     }
 

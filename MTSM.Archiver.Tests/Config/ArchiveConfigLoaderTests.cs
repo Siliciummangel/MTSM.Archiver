@@ -64,8 +64,8 @@ public class ArchiveConfigLoaderTests : IDisposable
         Assert.NotNull(result);
         Assert.NotNull(result.Jobs);
         Assert.Equal(2, result.Jobs.Count);
-        Assert.Contains(result.Jobs, j => j.Name == "Job1");
-        Assert.Contains(result.Jobs, j => j.Name == "Job2");
+        Assert.Contains(result.Jobs, j => j.Job.Name == "Job1");
+        Assert.Contains(result.Jobs, j => j.Job.Name == "Job2");
     }
 
     [Fact]
@@ -90,9 +90,9 @@ public class ArchiveConfigLoaderTests : IDisposable
         // Assert
         Assert.NotNull(result);
         Assert.Equal(3, result.Jobs.Count);
-        Assert.Contains(result.Jobs, j => j.Name == "Job1");
-        Assert.Contains(result.Jobs, j => j.Name == "Job2");
-        Assert.Contains(result.Jobs, j => j.Name == "Job3");
+        Assert.Contains(result.Jobs, j => j.Job.Name == "Job1");
+        Assert.Contains(result.Jobs, j => j.Job.Name == "Job2");
+        Assert.Contains(result.Jobs, j => j.Job.Name == "Job3");
     }
 
     [Fact]
@@ -113,8 +113,8 @@ public class ArchiveConfigLoaderTests : IDisposable
 
         // Assert
         Assert.Equal(2, result.Jobs.Count);
-        Assert.Contains(result.Jobs, j => j.Name == "YamlJob");
-        Assert.Contains(result.Jobs, j => j.Name == "YmlJob");
+        Assert.Contains(result.Jobs, j => j.Job.Name == "YamlJob");
+        Assert.Contains(result.Jobs, j => j.Job.Name == "YmlJob");
     }
 
     [Fact]
@@ -141,7 +141,7 @@ public class ArchiveConfigLoaderTests : IDisposable
 
         // Assert
         Assert.Single(result.Jobs);
-        Assert.Equal("Job1", result.Jobs[0].Name);
+        Assert.Equal("Job1", result.Jobs[0].Job.Name);
     }
 
     [Fact]
@@ -161,7 +161,7 @@ public class ArchiveConfigLoaderTests : IDisposable
 
         // Assert
         Assert.Single(result.Jobs);
-        Assert.Equal("AbsoluteJob", result.Jobs[0].Name);
+        Assert.Equal("AbsoluteJob", result.Jobs[0].Job.Name);
     }
 
     [Fact]
@@ -184,7 +184,7 @@ public class ArchiveConfigLoaderTests : IDisposable
 
         // Assert
         Assert.Single(result.Jobs);
-        Assert.Equal("Job1", result.Jobs[0].Name);
+        Assert.Equal("Job1", result.Jobs[0].Job.Name);
     }
 
     [Fact]
@@ -225,9 +225,9 @@ public class ArchiveConfigLoaderTests : IDisposable
         // Assert
         Assert.Equal(3, result.Jobs.Count);
         // Files are ordered alphabetically, so a_job, b_job, c_job
-        Assert.Equal("JobA", result.Jobs[0].Name);
-        Assert.Equal("JobB", result.Jobs[1].Name);
-        Assert.Equal("JobC", result.Jobs[2].Name);
+        Assert.Equal("JobA", result.Jobs[0].Job.Name);
+        Assert.Equal("JobB", result.Jobs[1].Job.Name);
+        Assert.Equal("JobC", result.Jobs[2].Job.Name);
     }
 
     [Fact]
@@ -250,6 +250,8 @@ public class ArchiveConfigLoaderTests : IDisposable
         // Assert
         // Both files should be loaded as they have different extensions
         Assert.Equal(2, result.Jobs.Count);
+        Assert.Contains(result.Jobs, j => j.Job.Name == "JobYaml");
+        Assert.Contains(result.Jobs, j => j.Job.Name == "JobYml");
     }
 
     [Fact]
@@ -497,7 +499,7 @@ public class ArchiveConfigLoaderTests : IDisposable
 
         // Assert
         Assert.Single(result.Jobs);
-        Assert.Equal("LongPathJob", result.Jobs[0].Name);
+        Assert.Equal("LongPathJob", result.Jobs[0].Job.Name);
     }
 
     [Fact]
@@ -516,7 +518,7 @@ public class ArchiveConfigLoaderTests : IDisposable
 
         // Assert
         Assert.Single(result.Jobs);
-        Assert.Equal("SpecialCharJob", result.Jobs[0].Name);
+        Assert.Equal("SpecialCharJob", result.Jobs[0].Job.Name);
     }
 
     [Fact]
@@ -535,7 +537,7 @@ public class ArchiveConfigLoaderTests : IDisposable
 
         // Assert
         Assert.Single(result.Jobs);
-        Assert.Equal("UnicodeJob", result.Jobs[0].Name);
+        Assert.Equal("UnicodeJob", result.Jobs[0].Job.Name);
     }
 
     [Fact]
@@ -563,7 +565,7 @@ public class ArchiveConfigLoaderTests : IDisposable
 
         // Assert
         Assert.Single(result.Jobs);
-        Assert.Equal("MixedPathJob", result.Jobs[0].Name);
+        Assert.Equal("MixedPathJob", result.Jobs[0].Job.Name);
     }
 
     [Fact]
@@ -595,7 +597,7 @@ public class ArchiveConfigLoaderTests : IDisposable
 
             // Assert
             Assert.Single(result.Jobs);
-            Assert.Equal("CurrentDirJob", result.Jobs[0].Name);
+            Assert.Equal("CurrentDirJob", result.Jobs[0].Job.Name);
         }
         finally
         {
@@ -624,7 +626,7 @@ public class ArchiveConfigLoaderTests : IDisposable
         // Assert
         // Only the top-level job should be loaded (SearchOption.TopDirectoryOnly)
         Assert.Single(result.Jobs);
-        Assert.Equal("TopLevelJob", result.Jobs[0].Name);
+        Assert.Equal("TopLevelJob", result.Jobs[0].Job.Name);
     }
 
     [Fact]
@@ -697,10 +699,10 @@ public class ArchiveConfigLoaderTests : IDisposable
 
         // Assert
         Assert.Single(result1.Jobs);
-        Assert.Equal("Job1", result1.Jobs[0].Name);
+        Assert.Equal("Job1", result1.Jobs[0].Job.Name);
 
         Assert.Single(result2.Jobs);
-        Assert.Equal("Job2", result2.Jobs[0].Name);
+        Assert.Equal("Job2", result2.Jobs[0].Job.Name);
     }
 
     [Fact]
@@ -726,7 +728,7 @@ public class ArchiveConfigLoaderTests : IDisposable
         Assert.Equal(jobCount, result.Jobs.Count);
         for (int i = 0; i < jobCount; i++)
         {
-            Assert.Contains(result.Jobs, j => j.Name == $"Job{i}");
+            Assert.Contains(result.Jobs, j => j.Job.Name == $"Job{i}");
         }
     }
 
@@ -803,25 +805,26 @@ public class ArchiveConfigLoaderTests : IDisposable
     {
         var jobPath = Path.Combine(directory, fileName);
         var content = $@"
-            name: {jobName}
-            enabled: true
-            source:
-              path: C:\Source
-              recursive: true
-            selection:
-              extensions:
-                - .txt
-                - .log
-              minimumAgeDays: 7
-            archive:
-              targetDirectory: C:\Archive
-              fileNamePattern: '{{jobName}}_{{yyyyMMdd}}'
-              format: Zip
-            sourceFileBehavior:
-              afterSuccessfulArchive: Keep
+            job:
+              name: {jobName}
+              enabled: true
+              source:
+                path: C:\Source
+                recursive: true
+              selection:
+                extensions:
+                  - .txt
+                  - .log
+                minimumAgeDays: 7
+              archive:
+                targetDirectory: C:\Archive
+                fileNamePattern: '{{jobName}}_{{yyyyMMdd}}'
+                format: Zip
+              sourceFileBehavior:
+                afterSuccessfulArchive: Keep
+              execution:
+                dryRun: false
             schedules: []
-            execution:
-              dryRun: false
             ";
         File.WriteAllText(jobPath, content);
     }
